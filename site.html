@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Валентин</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg0:#05060a;
+      --bg1:#0a0d17;
+      --bg2:#0b1224;
+
+      --card: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+
+      --yes1:#a855f7;
+      --yes2:#ec4899;
+
+      --noBg: rgba(255,255,255,.08);
+      --noText: rgba(255,255,255,.86);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(168,85,247,.10), transparent 60%),
+        radial-gradient(700px 500px at 80% 30%, rgba(236,72,153,.08), transparent 58%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 55%, var(--bg2));
+      display:grid;
+      place-items:center;
+      padding:18px;
+      overflow:hidden;
+    }
+
+    .wrap{
+      width:min(560px, 94vw);
+      border-radius: 28px;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid var(--stroke);
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+      backdrop-filter: blur(10px);
+    }
+
+    .card{
+      border-radius: 22px;
+      padding: 18px 16px 16px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .title{
+      font-family: Unbounded, system-ui, sans-serif;
+      font-weight: 700;
+      margin: 12px 0 6px;
+      letter-spacing: -0.02em;
+      font-size: clamp(22px, 4vw, 30px);
+      text-align:center;
+    }
+    .sub{
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 14px;
+      text-align:center;
+    }
+
+    .media{
+      width: 100%;
+      aspect-ratio: 16/11;
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 18px 55px rgba(0,0,0,.50);
+      display:grid;
+      place-items:center;
+      position:relative;
+    }
+    .media img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transform: scale(1.02);
+    }
+
+    .fade{ animation: fade .22s ease both; }
+    @keyframes fade{
+      from{opacity:.55; transform: translateY(2px) scale(.995);}
+      to{opacity:1; transform: translateY(0) scale(1);}
+    }
+
+    .btnArea{
+      position: relative;
+      height: 118px;
+      margin-top: 14px;
+    }
+
+    .btn{
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      cursor: pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.50);
+      transition: transform .16s ease, filter .16s ease, opacity .16s ease;
+    }
+    .btn:active{ transform: scale(.985); }
+
+    #yesBtn{
+      background: linear-gradient(90deg, rgba(168,85,247,.95), rgba(236,72,153,.95));
+      color: white;
+      transform-origin: center;
+      will-change: transform;
+    }
+
+    #noBtn{
+      position: absolute;
+      left: 0;
+      top: 66px;
+      background: var(--noBg);
+      color: var(--noText);
+      backdrop-filter: blur(10px);
+      transform-origin: left center;
+      will-change: transform, left, top;
+    }
+
+    .wiggle{ animation: wiggle .14s linear 2; }
+    @keyframes wiggle{
+      0%{transform:translateX(0)}
+      25%{transform:translateX(-3px)}
+      50%{transform:translateX(3px)}
+      75%{transform:translateX(-2px)}
+      100%{transform:translateX(0)}
+    }
+
+    .growPop{ animation: growPop .18s ease; }
+    @keyframes growPop{
+      from{ transform: scale(var(--from, 1)); }
+      to{ transform: scale(var(--to, 1)); }
+    }
+
+    /* финал */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+      padding: 18px;
+    }
+    .modal{
+      width: min(820px, 96vw);
+      border-radius: 26px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 30px 90px rgba(0,0,0,.70);
+      padding: 18px;
+      text-align:center;
+    }
+    .modal h2{
+      font-family: Unbounded, system-ui, sans-serif;
+      margin: 10px 0 8px;
+      font-size: clamp(22px, 4vw, 30px);
+      letter-spacing:-.01em;
+    }
+    .modal p{
+      margin: 0 0 14px;
+      color: rgba(255,255,255,.65);
+      font-weight: 700;
+      line-height:1.35;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 700px){
+      .grid2{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .close{
+      margin-top: 12px;
+      width: 100%;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 800;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.9);
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="media" id="media">
+        <img id="gif" src="https://media1.tenor.com/m/MuAEOBgxgOEAAAAd/rawr-minions.gif" alt="gif">
+      </div>
+
+      <h1 class="title">Будешь ли ты моим валентином? 💘</h1>
+      <p class="sub">Выбери ответ</p>
+
+      <div class="btnArea" id="area">
+        <button class="btn" id="yesBtn">ДА 💖</button>
+        <button class="btn" id="noBtn">НЕТ</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>Это тебе 🖤</h2>
+      <p>Мне очень повезло с тобой</p>
+
+      <div class="grid2">
+        <!-- гифка "как на фото": Флинн в лодке протягивает цветы -->
+        <div class="media">
+          <img
+            src="https://media1.tenor.com/m/YVWl913QW1oAAAAd/rapunzel-tangled.gif"
+            alt="rapunzel gif">
+        </div>
+
+        <!-- твоя фотография чёрных цветов (встроена) -->
+        <div class="media">
+          <img
+            alt="black flowers"
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAjoAAAI6CAIAAAChKnWXAAAQAElEQVR4AdT9ibdsSXbeh0Wck3nvfVPN... (ОЧЕНЬ ДЛИННО) ...">
+        </div>
+      </div>
+
+      <button class="close" id="closeBtn">Закрыть</button>
+    </div>
+  </div>
+
+  <script>
+    const area = document.getElementById('area');
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const gif = document.getElementById('gif');
+    const media = document.getElementById('media');
+
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // гифки "как в видео" (по смыслу)
+    const stages = [
+      { noText: "НЕТ",         gif: "https://media1.tenor.com/m/MuAEOBgxgOEAAAAd/rawr-minions.gif" },
+      { noText: "подумай",     gif: "https://media.tenor.com/l0YydeNbA6IAAAAM/pretty-please-puss-in-boots.gif" },
+      { noText: "пожалуйста",  gif: "https://media1.tenor.com/m/wJkYTZECobMAAAAd/bunny-crying.gif" },
+      { noText: "не надо",     gif: "https://media.tenor.com/vQMltVVcsPsAAAAM/cat-annoyed.gif" },
+      { noText: "ладно",       gif: "https://media.tenor.com/vQMltVVcsPsAAAAM/cat-annoyed.gif" }
+    ];
+
+    let noClicks = 0;
+    let noScale = 1.0;
+    let yesScale = 1.0;
+
+    function setGif(src){
+      media.classList.remove('fade');
+      void media.offsetWidth;
+      media.classList.add('fade');
+      gif.src = src;
+    }
+
+    function teleportNo(){
+      const a = area.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+      const pad = 6;
+
+      const maxLeft = Math.max(pad, a.width - b.width - pad);
+      const maxTop  = Math.max(pad, a.height - b.height - pad);
+
+      const topMin = 66;
+      const topMax = Math.max(topMin, maxTop);
+
+      const left = pad + Math.random() * (maxLeft - pad);
+      const top  = topMin + Math.random() * (topMax - topMin);
+
+      noBtn.style.left = left + "px";
+      noBtn.style.top  = top + "px";
+
+      noBtn.classList.remove("wiggle");
+      void noBtn.offsetWidth;
+      noBtn.classList.add("wiggle");
+    }
+
+    function bumpYes(from, to){
+      yesBtn.style.setProperty("--from", from);
+      yesBtn.style.setProperty("--to", to);
+      yesBtn.classList.remove("growPop");
+      void yesBtn.offsetWidth;
+      yesBtn.classList.add("growPop");
+      yesBtn.style.transform = `scale(${to})`;
+    }
+
+    function onNo(){
+      noClicks++;
+      const stage = stages[Math.min(noClicks, stages.length - 1)];
+
+      noBtn.textContent = stage.noText;
+      setGif(stage.gif);
+
+      // НЕТ уменьшается
+      noScale = Math.max(0.32, 1 - noClicks * 0.16);
+      noBtn.style.transform = `scale(${noScale})`;
+      noBtn.style.opacity = String(Math.max(0.55, 1 - noClicks * 0.07));
+
+      // ДА растёт сильно
+      const prev = yesScale;
+      yesScale = Math.min(3.6, 1 + noClicks * 0.45);
+      bumpYes(prev, yesScale);
+
+      // НЕТ убегает
+      teleportNo();
+    }
+
+    // убегает при приближении
+    area.addEventListener("mousemove", (e) => {
+      const r = noBtn.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top  + r.height/2;
+      const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+      if (dist < 90) teleportNo();
+    });
+
+    noBtn.addEventListener("mouseenter", teleportNo);
+    noBtn.addEventListener("click", (e) => { e.preventDefault(); onNo(); });
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); onNo(); }, { passive:false });
+
+    yesBtn.addEventListener("click", () => {
+      overlay.style.display = "grid";
+    });
+
+    closeBtn.addEventListener("click", () => overlay.style.display = "none");
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.style.display = "none"; });
+
+    requestAnimationFrame(() => teleportNo());
+  </script>
+</body>
+</html>
